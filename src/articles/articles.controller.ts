@@ -8,13 +8,17 @@ import {
     Delete,
     NotFoundException,
     HttpCode,
-    HttpStatus
+    HttpStatus,
+    Put
 } from '@nestjs/common';
-import { ArticlesService } from './articles.service';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { ArticleEntity } from './entities/article.entity';
+
+import { ArticlesService } from './articles.service';
 
 @Controller('articles')
 @ApiTags('articles')
@@ -47,6 +51,15 @@ export class ArticlesController {
     @ApiCreatedResponse({ type: ArticleEntity })
     create(@Body() createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
         return this.articlesService.create(createArticleDto);
+    }
+
+    @Put(':id')
+    @ApiOkResponse({ type: ArticleEntity })
+    replace(
+        @Param('id') id: string,
+        @Body() replaceArticleDto: ReplaceArticleDto
+    ): Promise<ArticleEntity> {
+        return this.articlesService.replace(+id, replaceArticleDto);
     }
 
     @Patch(':id')
