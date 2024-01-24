@@ -11,7 +11,12 @@ import {
     HttpStatus,
     Put
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiCreatedResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags
+} from '@nestjs/swagger';
 
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -26,12 +31,14 @@ export class ArticlesController {
     constructor(private readonly articlesService: ArticlesService) {}
 
     @Get()
+    @ApiOperation({ summary: 'Get all published articles' })
     @ApiOkResponse({ type: [ArticleEntity] })
-    findAll(): Promise<ArticleEntity[]> {
-        return this.articlesService.findAll();
+    findPublished(): Promise<ArticleEntity[]> {
+        return this.articlesService.findPublished();
     }
 
     @Get('drafts')
+    @ApiOperation({ summary: 'Get all non-published articles' })
     @ApiOkResponse({ type: [ArticleEntity] })
     findDrafts() {
         return this.articlesService.findDrafts();

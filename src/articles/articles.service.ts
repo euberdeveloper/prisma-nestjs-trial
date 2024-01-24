@@ -9,7 +9,7 @@ import { ReplaceArticleDto } from './dto/replace-article.dto';
 export class ArticlesService {
     constructor(private prisma: PrismaService) {}
 
-    findAll() {
+    findPublished() {
         return this.prisma.article.findMany({ where: { published: true } });
     }
 
