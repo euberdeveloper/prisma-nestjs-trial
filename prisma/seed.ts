@@ -28,8 +28,13 @@ async function main() {
             }
         }
     ];
+
+    // for (const articleBody of articlesBodys) {
+    //     await prisma.article.upsert(articleBody);
+    // }
+
     const articles = await Promise.all(
-        articlesBodys.map((article) => article.create)
+        articlesBodys.map((article) => prisma.article.upsert(article))
     );
 
     console.log(articles);
