@@ -12,11 +12,11 @@ export class UsersService {
     }
 
     findById(id: number) {
-        return this.prisma.user.findUnique({ where: { id } });
+        return this.prisma.user.findUniqueOrThrow({ where: { id } });
     }
 
     findByEmail(email: string) {
-        return this.prisma.user.findUnique({ where: { email } });
+        return this.prisma.user.findUniqueOrThrow({ where: { email } });
     }
 
     create(createUserDto: CreateUserDto) {
