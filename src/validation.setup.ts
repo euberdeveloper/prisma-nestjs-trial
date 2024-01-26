@@ -4,6 +4,7 @@ export function setupValidation(app: INestApplication): void {
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
+            forbidNonWhitelisted: true,
             transform: true
         })
     );
