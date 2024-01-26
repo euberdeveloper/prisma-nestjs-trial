@@ -6,7 +6,6 @@ import {
     Patch,
     Param,
     Delete,
-    NotFoundException,
     HttpCode,
     HttpStatus,
     Put
@@ -47,11 +46,7 @@ export class ArticlesController {
     @Get(':id')
     @ApiOkResponse({ type: ArticleEntity })
     async findOne(@Param('id') id: number): Promise<ArticleEntity> {
-        const article = await this.articlesService.findOne(id);
-        if (!article) {
-            throw new NotFoundException(`Article #${id} not found`);
-        }
-        return article;
+        return this.articlesService.findOne(id);
     }
 
     @Post()
