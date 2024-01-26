@@ -7,12 +7,15 @@ import {
     Param,
     Delete,
     HttpStatus,
-    HttpCode
+    HttpCode,
+    Put
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ReplaceUserDto } from './dto/replace-user.dto';
+import { UserEntity } from './entities/user.entity';
 
 @ApiTags('users')
 @Controller('users')
@@ -20,31 +23,37 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get()
-    @ApiOkResponse({ type: [CreateUserDto] })
+    @ApiOkResponse({ type: [UserEntity] })
     findAll() {
         return this.usersService.findAll();
     }
 
     @Get(':id')
-    @ApiOkResponse({ type: CreateUserDto })
+    @ApiOkResponse({ type: UserEntity })
     findById(@Param('id') id: number) {
         return this.usersService.findById(id);
     }
 
     @Get('/email/:email')
-    @ApiOkResponse({ type: CreateUserDto })
+    @ApiOkResponse({ type: UserEntity })
     findByEmail(@Param('email') email: string) {
         return this.usersService.findByEmail(email);
     }
 
     @Post()
-    @ApiCreatedResponse({ type: CreateUserDto })
+    @ApiCreatedResponse({ type: UserEntity })
     create(@Body() createUserDto: CreateUserDto) {
         return this.usersService.create(createUserDto);
     }
 
+    @Put(':id')
+    @ApiOkResponse({ type: UserEntity })
+    replace(@Param('id') id: number, @Body() replaceUserDto: ReplaceUserDto) {
+        return this.usersService.update(id, replaceUserDto);
+    }
+
     @Patch(':id')
-    @ApiOkResponse({ type: CreateUserDto })
+    @ApiOkResponse({ type: UserEntity })
     update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.update(id, updateUserDto);
     }
