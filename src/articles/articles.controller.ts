@@ -10,7 +10,7 @@ import {
     HttpStatus,
     Put
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -45,6 +45,7 @@ export class ArticlesController {
     }
 
     @Post()
+    @ApiCreatedResponse({ type: ArticleEntity })
     create(@Body() createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
         return this.articlesService.create(createArticleDto);
     }
@@ -68,6 +69,7 @@ export class ArticlesController {
     }
 
     @Delete(':id')
+    @ApiNoContentResponse()
     @HttpCode(HttpStatus.NO_CONTENT)
     async remove(@Param('id') id: number): Promise<void> {
         await this.articlesService.remove(id);
