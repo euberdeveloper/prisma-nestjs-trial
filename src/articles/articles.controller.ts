@@ -33,45 +33,55 @@ export class ArticlesController {
     @Get()
     @ApiOperation({ summary: 'Get all published articles' })
     @ApiOkResponse({ type: [ArticleEntity] })
-    findPublished(): Promise<ArticleEntity[]> {
-        return this.articlesService.findPublished();
+    async findPublished(): Promise<ArticleEntity[]> {
+        const articles = await this.articlesService.findPublished();
+        return articles.map((article) => new ArticleEntity(article));
     }
 
     @Get('drafts')
     @ApiOperation({ summary: 'Get all non-published articles' })
     @ApiOkResponse({ type: [ArticleEntity] })
-    findDrafts() {
-        return this.articlesService.findDrafts();
+    async findDrafts() {
+        const articles = await this.articlesService.findDrafts();
+        return articles.map((article) => new ArticleEntity(article));
     }
 
     @Get(':id')
     @ApiOkResponse({ type: ArticleEntity })
     async findOne(@Param('id') id: number): Promise<ArticleEntity> {
-        return this.articlesService.findOne(id);
+        return new ArticleEntity(await this.articlesService.findOne(id));
     }
 
     @Post()
     @ApiCreatedResponse({ type: ArticleEntity })
-    create(@Body() createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
-        return this.articlesService.create(createArticleDto);
+    async create(
+        @Body() createArticleDto: CreateArticleDto
+    ): Promise<ArticleEntity> {
+        return new ArticleEntity(
+            await this.articlesService.create(createArticleDto)
+        );
     }
 
     @Put(':id')
     @ApiOkResponse({ type: ArticleEntity })
-    replace(
+    async replace(
         @Param('id') id: number,
         @Body() replaceArticleDto: ReplaceArticleDto
     ): Promise<ArticleEntity> {
-        return this.articlesService.replace(id, replaceArticleDto);
+        return new ArticleEntity(
+            await this.articlesService.replace(id, replaceArticleDto)
+        );
     }
 
     @Patch(':id')
     @ApiOkResponse({ type: ArticleEntity })
-    update(
+    async update(
         @Param('id') id: number,
         @Body() updateArticleDto: UpdateArticleDto
     ): Promise<ArticleEntity> {
-        return this.articlesService.update(id, updateArticleDto);
+        return new ArticleEntity(
+            await this.articlesService.update(id, updateArticleDto)
+        );
     }
 
     @Delete(':id')

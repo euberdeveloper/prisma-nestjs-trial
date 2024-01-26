@@ -10,11 +10,17 @@ export class ArticlesService {
     constructor(private prisma: PrismaService) {}
 
     findPublished() {
-        return this.prisma.article.findMany({ where: { published: true } });
+        return this.prisma.article.findMany({
+            where: { published: true },
+            include: { author: true }
+        });
     }
 
     findDrafts() {
-        return this.prisma.article.findMany({ where: { published: false } });
+        return this.prisma.article.findMany({
+            where: { published: false },
+            include: { author: true }
+        });
     }
 
     findOne(id: number) {
