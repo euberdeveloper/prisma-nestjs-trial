@@ -46,8 +46,8 @@ export class ArticlesController {
 
     @Get(':id')
     @ApiOkResponse({ type: ArticleEntity })
-    async findOne(@Param('id') id: string): Promise<ArticleEntity> {
-        const article = await this.articlesService.findOne(+id);
+    async findOne(@Param('id') id: number): Promise<ArticleEntity> {
+        const article = await this.articlesService.findOne(id);
         if (!article) {
             throw new NotFoundException(`Article #${id} not found`);
         }
@@ -63,24 +63,24 @@ export class ArticlesController {
     @Put(':id')
     @ApiOkResponse({ type: ArticleEntity })
     replace(
-        @Param('id') id: string,
+        @Param('id') id: number,
         @Body() replaceArticleDto: ReplaceArticleDto
     ): Promise<ArticleEntity> {
-        return this.articlesService.replace(+id, replaceArticleDto);
+        return this.articlesService.replace(id, replaceArticleDto);
     }
 
     @Patch(':id')
     @ApiOkResponse({ type: ArticleEntity })
     update(
-        @Param('id') id: string,
+        @Param('id') id: number,
         @Body() updateArticleDto: UpdateArticleDto
     ): Promise<ArticleEntity> {
-        return this.articlesService.update(+id, updateArticleDto);
+        return this.articlesService.update(id, updateArticleDto);
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async remove(@Param('id') id: string): Promise<void> {
-        await this.articlesService.remove(+id);
+    async remove(@Param('id') id: number): Promise<void> {
+        await this.articlesService.remove(id);
     }
 }
