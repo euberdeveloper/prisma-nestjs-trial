@@ -10,12 +10,7 @@ import {
     HttpStatus,
     Put
 } from '@nestjs/common';
-import {
-    ApiCreatedResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -50,7 +45,6 @@ export class ArticlesController {
     }
 
     @Post()
-    @ApiCreatedResponse({ type: ArticleEntity })
     create(@Body() createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
         return this.articlesService.create(createArticleDto);
     }
