@@ -8,7 +8,7 @@ export class ArticleEntity implements Article {
     @ApiProperty()
     title: string;
 
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({ required: false, nullable: true, type: String })
     description: string | null;
 
     @ApiProperty()
@@ -23,6 +23,6 @@ export class ArticleEntity implements Article {
     @ApiProperty()
     updatedAt: Date;
 
-    @ApiProperty({ required: false, nullable: true })
+    @ApiProperty({ required: false, nullable: true, type: Number })
     authorId: number | null;
 }
