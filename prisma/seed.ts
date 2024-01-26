@@ -10,7 +10,7 @@ async function main() {
             update: {},
             create: {
                 email: 'euberdeveloper+pnt1@gmail.com',
-                name: 'Eubero Euberis',
+                fullname: 'Eubero Euberis',
                 password: 'password'
             }
         },
@@ -19,7 +19,7 @@ async function main() {
             update: {},
             create: {
                 email: 'euberdeveloper+pnt2@gmail.com',
-                name: 'Euberino Euberetto',
+                fullname: 'Euberino Euberetto',
                 password: 'password'
             }
         }
