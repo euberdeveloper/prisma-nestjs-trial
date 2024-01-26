@@ -6,6 +6,7 @@ export function setupSwagger(app: INestApplication): void {
         .setTitle('NestJS Prisma Trial')
         .setDescription('The NestJS-Prisma-Trial API description')
         .setVersion('0.1')
+        .addBearerAuth()
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
