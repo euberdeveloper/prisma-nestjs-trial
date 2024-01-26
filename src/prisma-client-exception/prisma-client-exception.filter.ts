@@ -12,9 +12,18 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const message = exception.message.replace(/\n/g, '');
+        console.log(exception.code)
 
         switch (exception.code) {
             case 'P2025': {
+                const status = HttpStatus.NOT_FOUND;
+                response.status(status).json({
+                    statusCode: status,
+                    message: message
+                });
+                break;
+            }
+            case 'P2003': {
                 const status = HttpStatus.NOT_FOUND;
                 response.status(status).json({
                     statusCode: status,
