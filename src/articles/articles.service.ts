@@ -12,19 +12,24 @@ export class ArticlesService {
     findPublished() {
         return this.prisma.article.findMany({
             where: { published: true },
-            include: { author: true }
+            include: { author: { include: { role: true } } }
         });
     }
 
     findDrafts() {
         return this.prisma.article.findMany({
             where: { published: false },
-            include: { author: true }
+            include: { author: { include: { role: true } } }
         });
     }
 
     findOne(id: number) {
-        return this.prisma.article.findUniqueOrThrow({ where: { id } });
+        return this.prisma.article.findUniqueOrThrow({
+            where: { id },
+            include: {
+                author: { include: { role: true } }
+            }
+        });
     }
 
     create(createArticleDto: CreateArticleDto) {

@@ -12,7 +12,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const message = exception.message.replace(/\n/g, '');
-        console.log(exception.code)
+        console.log(exception.code);
 
         switch (exception.code) {
             case 'P2025': {

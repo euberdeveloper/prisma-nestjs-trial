@@ -19,14 +19,22 @@ export class UsersService {
         return this.prisma.user.findUniqueOrThrow({ where: { email } });
     }
 
-    create(createUserDto: CreateUserDto) {
-        return this.prisma.user.create({ data: createUserDto });
+    create({ role, ...user }: CreateUserDto) {
+        return this.prisma.user.create({
+            data: {
+                ...user,
+                role: { connect: { name: role } }
+            }
+        });
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
+    update(id: number, { role, ...user }: UpdateUserDto) {
         return this.prisma.user.update({
             where: { id },
-            data: updateUserDto
+            data: {
+                ...user,
+                role: { connect: { name: role } }
+            }
         });
     }
 
