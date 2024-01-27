@@ -3,15 +3,58 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+    type UpsertRoleArgs = Parameters<typeof prisma.role.upsert>[0];
+    const rolesBodies: UpsertRoleArgs[] = [
+        {
+            where: { name: 'root' },
+            update: {},
+            create: { name: 'root' }
+        },
+        {
+            where: { name: 'admin' },
+            update: {},
+            create: { name: 'admin' }
+        },
+        {
+            where: { name: 'user' },
+            update: {},
+            create: { name: 'user' }
+        }
+    ];
+    const [rootRole, adminRole, userRole] = await Promise.all(
+        rolesBodies.map((role) => prisma.role.upsert(role))
+    );
+
     type UpsertUserArgs = Parameters<typeof prisma.user.upsert>[0];
-    const usersBodys: UpsertUserArgs[] = [
+    const usersBodies: UpsertUserArgs[] = [
+        {
+            where: { email: 'euberdeveloper+pntroot@gmail.com' },
+            update: {},
+            create: {
+                email: 'euberdeveloper+pntroot@gmail.com',
+                fullname: 'Eubero Euberis',
+                password: 'password',
+                roleId: rootRole.id
+            }
+        },
+        {
+            where: { email: 'euberdeveloper+pntadmin@gmail.com' },
+            update: {},
+            create: {
+                email: 'euberdeveloper+pntadmin@gmail.com',
+                fullname: 'Eubero Euberis',
+                password: 'password',
+                roleId: adminRole.id
+            }
+        },
         {
             where: { email: 'euberdeveloper+pnt1@gmail.com' },
             update: {},
             create: {
                 email: 'euberdeveloper+pnt1@gmail.com',
                 fullname: 'Eubero Euberis',
-                password: 'password'
+                password: 'password',
+                roleId: userRole.id
             }
         },
         {
@@ -20,19 +63,20 @@ async function main() {
             create: {
                 email: 'euberdeveloper+pnt2@gmail.com',
                 fullname: 'Euberino Euberetto',
-                password: 'password'
+                password: 'password',
+                roleId: userRole.id
             }
         }
     ];
     const users = await Promise.all(
-        usersBodys.map((user) => prisma.user.upsert(user))
+        usersBodies.map((user) => prisma.user.upsert(user))
     );
 
     console.log('Seeded users:');
     console.log(users);
 
     type UpsertArticleArgs = Parameters<typeof prisma.article.upsert>[0];
-    const articlesBodys: UpsertArticleArgs[] = [
+    const articlesBodies: UpsertArticleArgs[] = [
         {
             where: { title: 'Prisma Adds Support for MongoDB' },
             update: { authorId: users[0].id },
@@ -60,7 +104,7 @@ async function main() {
     ];
 
     const articles = await Promise.all(
-        articlesBodys.map((article) => prisma.article.upsert(article))
+        articlesBodies.map((article) => prisma.article.upsert(article))
     );
 
     console.log('Seeded articles:');
