@@ -10,17 +10,19 @@ import {
     HttpCode,
     UseGuards
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import {
     ApiBearerAuth,
     ApiCreatedResponse,
     ApiOkResponse,
     ApiTags
 } from '@nestjs/swagger';
+
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 
 @ApiTags('users')
 @Controller('users')
