@@ -7,14 +7,17 @@ RUN corepack enable
 COPY . /app
 WORKDIR /app
 
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+FROM base AS development
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN npm run prisma:client
 
 FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm build
+COPY --from=development /app/node_modules /app/node_modules
+RUN npm run build
+ENV NODE_ENV=production
+RUN pnpm install --prod
 
 FROM base
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/dist /app/dist
-CMD [ "pnpm", "start" ]
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build  /app/dist /app/dist
+CMD [ "npm", "run", "start:prod" ]
