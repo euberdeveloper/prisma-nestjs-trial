@@ -26,21 +26,39 @@ export class RolesService {
         return this.prisma.role.create({ data: createRoleDto });
     }
 
-    replace(id: number, replaceRoleDto: ReplaceRoleDto) {
+    replaceById(id: number, replaceRoleDto: ReplaceRoleDto) {
         return this.prisma.role.update({
             where: { id },
             data: replaceRoleDto
         });
     }
 
-    update(id: number, updateRoleDto: UpdateRoleDto) {
+    replaceByName(name: string, replaceRoleDto: ReplaceRoleDto) {
+        return this.prisma.role.update({
+            where: { name },
+            data: replaceRoleDto
+        });
+    }
+
+    updateById(id: number, updateRoleDto: UpdateRoleDto) {
         return this.prisma.role.update({
             where: { id },
             data: updateRoleDto
         });
     }
 
-    remove(id: number) {
+    updateByName(name: string, updateRoleDto: UpdateRoleDto) {
+        return this.prisma.role.update({
+            where: { name },
+            data: updateRoleDto
+        });
+    }
+
+    removeById(id: number) {
         return this.prisma.role.delete({ where: { id } });
+    }
+
+    removeByName(name: string) {
+        return this.prisma.role.delete({ where: { name } });
     }
 }

@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags
+} from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -18,12 +23,15 @@ export class AuthController {
     @Post('login')
     @Public()
     @UseGuards(LocalAuthGuard)
+    @ApiOperation({ summary: 'Logins with email and password' })
     @ApiOkResponse({ type: AuthEntity })
     login(@User() user: UserEntity, @Body() _loginDto: LoginDto) {
         return this.authService.login(user);
     }
 
     @Get('me')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Returns the logged in user' })
     @ApiOkResponse({ type: AuthEntity })
     me(@User() user: UserEntity) {
         return this.authService.me(user);

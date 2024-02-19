@@ -12,6 +12,7 @@ import {
     Query
 } from '@nestjs/common';
 import {
+    ApiBearerAuth,
     ApiCreatedResponse,
     ApiNoContentResponse,
     ApiOkResponse,
@@ -31,6 +32,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { RoleName } from 'src/roles/entities/role.entity';
 import { Me } from 'src/auth/decorators/me.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('articles')
 @ApiTags('articles')
@@ -38,6 +40,7 @@ export class ArticlesController {
     constructor(private readonly articlesService: ArticlesService) {}
 
     @Get()
+    @Public()
     @ApiOperation({ summary: 'Get all published articles' })
     @ApiOkResponse({ type: [ArticleEntity] })
     async findPublished(
@@ -48,6 +51,7 @@ export class ArticlesController {
     }
 
     @Get('drafts')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all non-published articles' })
     @ApiOkResponse({ type: [ArticleEntity] })
     async findDrafts(@Query() query: QueryParamArticleDto) {
@@ -56,6 +60,8 @@ export class ArticlesController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Gets the article with the specified id' })
     @ApiOkResponse({ type: ArticleEntity })
     async findOne(
         @Param('id') id: number,
@@ -65,6 +71,8 @@ export class ArticlesController {
     }
 
     @Post()
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Creates a new article' })
     @ApiCreatedResponse({ type: ArticleEntity })
     async create(
         @User() user: UserEntity,
@@ -79,6 +87,8 @@ export class ArticlesController {
     @Put(':id')
     @Roles(RoleName.ROOT, RoleName.ADMIN)
     @Me('either')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Replaces an article' })
     @ApiOkResponse({ type: ArticleEntity })
     async replace(
         @Param('id') id: number,
@@ -93,6 +103,8 @@ export class ArticlesController {
     @Patch(':id')
     @Roles(RoleName.ROOT, RoleName.ADMIN)
     @Me('either')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Updates an article' })
     @ApiOkResponse({ type: ArticleEntity })
     async update(
         @Param('id') id: number,
@@ -107,6 +119,8 @@ export class ArticlesController {
     @Delete(':id')
     @Roles(RoleName.ROOT, RoleName.ADMIN)
     @Me('either')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Removes an article' })
     @ApiNoContentResponse()
     @HttpCode(HttpStatus.NO_CONTENT)
     async remove(@Param('id') id: number): Promise<void> {

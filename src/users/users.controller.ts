@@ -13,19 +13,20 @@ import {
     ApiBearerAuth,
     ApiCreatedResponse,
     ApiOkResponse,
+    ApiOperation,
     ApiTags
 } from '@nestjs/swagger';
 
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RoleName } from 'src/roles/entities/role.entity';
+import { Me } from 'src/auth/decorators/me.decorator';
+import { IsMe } from 'src/decorators/is-me.decorator';
+import { Role } from 'src/decorators/role';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { Me } from 'src/auth/decorators/me.decorator';
-import { IsMe } from 'src/decorators/is-me.decorator';
-import { Role } from 'src/decorators/role';
 
 @ApiTags('users')
 @Controller('users')
@@ -33,6 +34,8 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get()
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Returns all the users' })
     @ApiOkResponse({ type: [UserEntity] })
     async findAll() {
         const users = await this.usersService.findAll();
@@ -41,6 +44,7 @@ export class UsersController {
 
     @Get(':id')
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Returns the user with specified id' })
     @ApiOkResponse({ type: UserEntity })
     async findById(@Param('id') id: number) {
         return new UserEntity(await this.usersService.findById(id));
@@ -48,6 +52,7 @@ export class UsersController {
 
     @Get('/email/:email')
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Returns the user with specified email' })
     @ApiOkResponse({ type: UserEntity })
     async findByEmail(@Param('email') email: string) {
         return new UserEntity(await this.usersService.findByEmail(email));
@@ -55,6 +60,8 @@ export class UsersController {
 
     @Post()
     @Roles(RoleName.ROOT, RoleName.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Create a new user' })
     @ApiCreatedResponse({ type: UserEntity })
     async create(@Role() role: RoleName, @Body() createUserDto: CreateUserDto) {
         return new UserEntity(
@@ -66,6 +73,7 @@ export class UsersController {
     @Roles(RoleName.ROOT)
     @Me('either')
     @ApiBearerAuth()
+    @ApiOperation({ summary: "Updates the user's data" })
     @ApiOkResponse({ type: UserEntity })
     async update(
         @Role() role: RoleName,
@@ -82,6 +90,7 @@ export class UsersController {
     @Roles(RoleName.ROOT, RoleName.ADMIN)
     @Me()
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Removes the user with specified id' })
     @HttpCode(HttpStatus.NO_CONTENT)
     remove(
         @Role() role: RoleName,

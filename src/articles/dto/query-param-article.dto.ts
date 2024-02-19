@@ -4,6 +4,6 @@ import { Equals, IsOptional } from 'class-validator';
 export class QueryParamArticleDto {
     @IsOptional()
     @Equals('author')
-    @ApiProperty()
+    @ApiProperty({ required: false, enum: ['author'] })
     embed: 'author';
 }
