@@ -37,7 +37,7 @@ export class ArticleEntity implements Article {
         ...data
     }: Partial<
         Omit<ArticleEntity, 'author'> & {
-            author: RawUserEntity | UserEntity;
+            author: Partial<RawUserEntity | UserEntity>;
         }
     >) {
         Object.assign(this, data);

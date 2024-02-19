@@ -37,7 +37,7 @@ export class UserEntity implements User {
         createdAt,
         updatedAt,
         role
-    }: RawUserEntity | UserEntity) {
+    }: Partial<RawUserEntity | UserEntity>) {
         Object.assign(this, {
             id,
             fullname,

@@ -4,49 +4,72 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
+import { QueryParamArticleDto } from './dto/query-param-article.dto';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ArticlesService {
     constructor(private prisma: PrismaService) {}
 
-    findPublished() {
+    private includeAuthor(query: QueryParamArticleDto) {
+        return query.embed === 'author'
+            ? { author: { include: { role: true } } }
+            : { author: false };
+    }
+
+    findPublished(query: QueryParamArticleDto) {
         return this.prisma.article.findMany({
             where: { published: true },
-            include: { author: { include: { role: true } } }
+            include: this.includeAuthor(query)
         });
     }
 
-    findDrafts() {
+    findDrafts(query: QueryParamArticleDto) {
         return this.prisma.article.findMany({
             where: { published: false },
-            include: { author: { include: { role: true } } }
+            include: this.includeAuthor(query)
         });
     }
 
-    findOne(id: number) {
+    findOne(id: number, query: QueryParamArticleDto) {
         return this.prisma.article.findUniqueOrThrow({
             where: { id },
-            include: {
-                author: { include: { role: true } }
-            }
+            include: this.includeAuthor(query)
         });
     }
 
-    create(createArticleDto: CreateArticleDto) {
-        return this.prisma.article.create({ data: createArticleDto });
-    }
-
-    replace(id: number, replaceArticleDto: ReplaceArticleDto) {
-        return this.prisma.article.update({
-            where: { id },
-            data: replaceArticleDto
+    create(
+        me: UserEntity,
+        createArticleDto: CreateArticleDto,
+        query: QueryParamArticleDto
+    ) {
+        return this.prisma.article.create({
+            data: { ...createArticleDto, authorId: me.id },
+            include: this.includeAuthor(query)
         });
     }
 
-    update(id: number, updateArticleDto: UpdateArticleDto) {
+    replace(
+        id: number,
+        replaceArticleDto: ReplaceArticleDto,
+        query: QueryParamArticleDto
+    ) {
         return this.prisma.article.update({
             where: { id },
-            data: updateArticleDto
+            data: replaceArticleDto,
+            include: this.includeAuthor(query)
+        });
+    }
+
+    update(
+        id: number,
+        updateArticleDto: UpdateArticleDto,
+        query: QueryParamArticleDto
+    ) {
+        return this.prisma.article.update({
+            where: { id },
+            data: updateArticleDto,
+            include: this.includeAuthor(query)
         });
     }
 
