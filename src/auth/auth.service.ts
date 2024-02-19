@@ -50,4 +50,8 @@ export class AuthService {
             })
         };
     }
+
+    async me(user: UserEntity) {
+        return user;
+    }
 }

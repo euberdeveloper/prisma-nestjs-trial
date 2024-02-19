@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -21,5 +21,11 @@ export class AuthController {
     @ApiOkResponse({ type: AuthEntity })
     login(@User() user: UserEntity, @Body() _loginDto: LoginDto) {
         return this.authService.login(user);
+    }
+
+    @Get('me')
+    @ApiOkResponse({ type: AuthEntity })
+    me(@User() user: UserEntity) {
+        return this.authService.me(user);
     }
 }
