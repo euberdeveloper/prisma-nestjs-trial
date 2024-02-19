@@ -7,8 +7,7 @@ import {
     Param,
     Delete,
     HttpStatus,
-    HttpCode,
-    UseGuards
+    HttpCode
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -17,12 +16,16 @@ import {
     ApiTags
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RoleName } from 'src/roles/entities/role.entity';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { Me } from 'src/auth/decorators/me.decorator';
+import { IsMe } from 'src/decorators/is-me.decorator';
+import { Role } from 'src/decorators/role';
 
 @ApiTags('users')
 @Controller('users')
@@ -30,7 +33,6 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get()
-    @UseGuards(JwtAuthGuard)
     @ApiOkResponse({ type: [UserEntity] })
     async findAll() {
         const users = await this.usersService.findAll();
@@ -38,7 +40,6 @@ export class UsersController {
     }
 
     @Get(':id')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOkResponse({ type: UserEntity })
     async findById(@Param('id') id: number) {
@@ -46,7 +47,6 @@ export class UsersController {
     }
 
     @Get('/email/:email')
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOkResponse({ type: UserEntity })
     async findByEmail(@Param('email') email: string) {
@@ -54,29 +54,40 @@ export class UsersController {
     }
 
     @Post()
+    @Roles(RoleName.ROOT, RoleName.ADMIN)
     @ApiCreatedResponse({ type: UserEntity })
-    async create(@Body() createUserDto: CreateUserDto) {
-        return new UserEntity(await this.usersService.create(createUserDto));
+    async create(@Role() role: RoleName, @Body() createUserDto: CreateUserDto) {
+        return new UserEntity(
+            await this.usersService.create(role, createUserDto)
+        );
     }
 
     @Patch(':id')
-    @UseGuards(JwtAuthGuard)
+    @Roles(RoleName.ROOT)
+    @Me('either')
     @ApiBearerAuth()
     @ApiOkResponse({ type: UserEntity })
     async update(
+        @Role() role: RoleName,
+        @IsMe() isMe: boolean,
         @Param('id') id: number,
         @Body() updateUserDto: UpdateUserDto
     ) {
         return new UserEntity(
-            await this.usersService.update(id, updateUserDto)
+            await this.usersService.update(id, role, isMe, updateUserDto)
         );
     }
 
     @Delete(':id')
-    @UseGuards(JwtAuthGuard)
+    @Roles(RoleName.ROOT, RoleName.ADMIN)
+    @Me()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: number) {
-        return this.usersService.remove(id);
+    remove(
+        @Role() role: RoleName,
+        @IsMe() isMe: boolean,
+        @Param('id') id: number
+    ) {
+        return this.usersService.remove(id, isMe, role);
     }
 }

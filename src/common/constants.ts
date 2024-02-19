@@ -1,6 +1,7 @@
 export default {
     decorators: {
         roles: 'ROLES',
-        public: 'PUBLIC'
+        public: 'PUBLIC',
+        me: 'ME'
     }
 };
