@@ -1,5 +1,7 @@
 generator client {
   provider = "prisma-client-js"
+  // Fix for pnpm, to save .prisma directly under node_modules
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -29,7 +31,7 @@ model User {
   password  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  
+
   role   Role @relation(fields: [roleId], references: [id])
   roleId Int  @map("role_id")
 
